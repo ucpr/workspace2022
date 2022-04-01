@@ -1,0 +1,25 @@
+name: ko_cloud_run_test
+
+on:
+  push:
+    branches: ['main']
+
+permissions:
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+      - uses: imjasonh/setup-ko@v0.4
+        with:
+          version: v0.11.2
+        env:
+          KO_DOCKER_REPO: ${{ env.KO_CLOUD_RUN_TEST_REGSITRY }}
+        run:
+          ko publish ./

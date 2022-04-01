@@ -6,20 +6,42 @@ on:
 
 permissions:
   id-token: write
+  contents: read
 
 jobs:
   publish:
     name: Publish
     runs-on: ubuntu-latest
+    if: false
+
     steps:
       - uses: actions/checkout@v3
+
       - uses: actions/setup-go@v2
         with:
           go-version: 1.17
+
       - uses: imjasonh/setup-ko@v0.4
         with:
           version: v0.11.2
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0.3.1'
+        with:
+          create_credentials_file: true
+          workload_identity_provider: ${{ secrets.KO_CLOUD_RUN_TEST_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.KO_CLOUD_RUN_TEST_SA }}
+
+      - id: gcloud
+        name: gcloud
+        run: |-
+          gcloud auth login --brief --cred-file="${{ steps.auth.outputs.credentials_file_path }}"
+          gcloud --quiet auth configure-docker
+
+      - name: Run ko publish
         env:
-          KO_DOCKER_REPO: ${{ env.KO_CLOUD_RUN_TEST_REGSITRY }}
-        run:
+          KO_DOCKER_REPO: ${{ secrets.KO_CLOUD_RUN_REGISTRY }}
+        run: |
+          cd ./ko_cloud_run_test
           ko publish ./

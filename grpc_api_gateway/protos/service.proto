@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+
+option  go_package = "github.com/ucpr/workspace2022/grpc_api_gateway/pb";
+
+package pb;
+
+message GetPingRequest {}
+
+message GetPingResponse {
+  string msg = 1;
+}
+
+service Service {
+  rpc Get(GetPingRequest) returns (GetPingResponse) {
+    option (google.api.http) = {
+      get: "/ping"
+    };
+  }
+}

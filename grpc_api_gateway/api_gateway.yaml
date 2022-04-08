@@ -1,0 +1,8 @@
+type: google.api.Service
+config_version: 3
+name: "*.apigateway.buddies-326706.cloud.goog"
+title: API Gateway + Cloud Run gRPC
+backend:
+  rules:
+    - selector: "*"
+      address: grpcs://grpc-api-gateway-ec9c3fd189ed7d056285133b76ed0c4f-wcxuknc23a-uc.a.run.app
